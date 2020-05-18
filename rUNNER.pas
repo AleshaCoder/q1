@@ -11,7 +11,7 @@ var
   ///Дым
   EffectBlocks: array[0..9] of Object3D;
   ///Здания
-  Buildings : array[0..29] of Object3D;
+  Buildings: array[0..29] of Object3D;
   ///Дорога
   Ground := Box(0, -45, -3, 5, 100, 5, colors.DarkGray);
   ///Игрок
@@ -44,7 +44,7 @@ var
   scoren := 0.0;
   ///Переменная для того, чтобы игрок не вылетал за пределы трассы.
   taps: integer;
-  
+
 ///Срабатывает при клике на кнопку старт
 ///Запускаем механизм движения игрока
 ///Убираем кнопку
@@ -104,7 +104,7 @@ begin
         end;
         kl := true;
       end;
-    Key.Space: speed*=1.2;
+    Key.Space: speed *= 1.2;
     Key.d, Key.Right: 
       begin
         if (kr = false) and (StartButtonClick) and (taps > -2) then 
@@ -128,20 +128,20 @@ begin
 end;
 
 ///Проверка соприкасания препятствий и их разделение
-procedure IsBagInRand(g : Object3D; i : integer);
+procedure IsBagInRand(g: Object3D; i: integer);
 begin
-   while isBag do
+  while isBag do
+  begin
+    isBag := false;
+    for var a2 := 0 to i do
     begin
-      isBag:=false;
-      for var a2 :=0 to i do
+      if (g.Y - Blocks[a2].Y < 100) and (g <> Blocks[a2]) and (g.X <> Blocks[a2].X) then
       begin
-        if (g.Y - Blocks[a2].Y < 2) and (g<>Blocks[a2]) and (g.X<>Blocks[a2].X) then
-        begin
-         isBag:=true;
-        end;
+        isBag := true;
       end;
-      if isBag then g.Position := new Point3D(Random(-2, 2), (i + 2) * Random(-5, -40) / 1.5, 0);
     end;
+    if isBag then g.Position := new Point3D(Random(-2, 2), (i + 2) * Random(-5, -40) / 1.5, 0);
+  end;
 end;
 
 ///Перемещение препятствий вперед. Ооочень оптимально по сравнению с пересозданием объектов. 
@@ -150,7 +150,7 @@ begin
   //g.Scale(0.07);
   g.Y -= Random(400, 800);
   g.X := Random(-2, 2);
-   IsBagInRand(g,29);
+  IsBagInRand(g, 29);
 end;
 
 ///Первая загрузка сцены
@@ -163,8 +163,8 @@ begin
     Blocks[a1].Z -= 0.52;
     Blocks[a1].Rotate(OrtZ, 180);
     IsBagInRand(Blocks[a1], a1);
-
-   // Buildings[a1] := FileModel3D(-5,(a1 + 2) * Random(-5, -40) / 1.5, 0, 'Shop.obj', ImageMaterial('Hotel.png',1,1));
+    
+    // Buildings[a1] := FileModel3D(-5,(a1 + 2) * Random(-5, -40) / 1.5, 0, 'Shop.obj', ImageMaterial('Hotel.png',1,1));
     //Buildings[a1].Color:=Colors.Blue;
     //Buildings[a1].Rotate(OrtX,90);
   end;
@@ -196,7 +196,7 @@ begin
   begin
     Blocks[a1].Position := new Point3D(Random(-2, 2), (a1 + 2) * Random(-5, -40) / 1.5, 0);
     Blocks[a1].Z -= 0.52;
-    IsBagInRand(Blocks[a1],a1);
+    IsBagInRand(Blocks[a1], a1);
   end;
   for var a1 := 0 to 9 do
   begin
@@ -241,12 +241,12 @@ begin
     begin
       Bahh.AnimRotate(OrtY, Random(-0.258, 0.25), dt).AutoReverse.Begin;
       View3D.Title := 'Score: ' + scoren.ToString;
-      View3D.SubTitle := 'Speed:  ' + speed.ToString;
+      View3D.SubTitle := 'Speed:  ' + (speed * 100).ToString;
       scoren += speed / 10;
       Score.Text := Round(scoren).ToString;
       
       //Проверка нахождения препятствий за камерой для их перезагрузки
-      //Проверка столкновения игрока с препятствиями      
+      //Проверка столкновения игрока с препятствиями
       for var qq := 0 to 29 do
       begin
         if (Camera.Position.Y < Blocks[qq].Y) then
@@ -277,6 +277,11 @@ begin
     begin
       Sleep(1000);
       speed += 0.01;
+      if (speed > 1.2) and (speed < 1.21) then SpeakAsync('Едем едем едем на геееликее. Скорость 120');
+      if (speed > 1.5) and (speed < 1.51) then SpeakAsync('В зеркале мигалки, я на черном танке. Скорость 150');
+      if (speed > 1.8) and (speed < 1.81) then SpeakAsync('Да, я еду в Бмв Мимо школы Мвд. Скорость 180');
+      if (speed > 2.0) and (speed < 2.01) then SpeakAsync('Чёрный бумер, чёрный бумер Если можешь — догони. Скорость 200');
+      if (speed > 2.2) and (speed < 2.21) then SpeakAsync('Виууууууууу');     
     end;
   end;
 end.
